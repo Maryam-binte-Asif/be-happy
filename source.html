@@ -1,16 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-            <style></style>
-        </head>
-        <body>
-            
-
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Are You Okay?</title>
     <style>
+        /* Your existing CSS remains the same */
         body {
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(to right, #ffffff, #f8f8f8);
@@ -117,8 +112,8 @@
             }
         }
     </style>
-
-
+</head>
+<body>
     <h1>ARE YOU OKAY?</h1>
     
     <div class="buttons">
@@ -128,23 +123,39 @@
     
     <p id="message"></p>
     
-    <img id="cuteImg" src="https://media.giphy.com/media/ya4eevXU490Iw/giphy.gif" alt="Cute">
+    <img id="cuteImg" src="https://media.giphy.com/media/ya4eevXU490Iw/giphy.gif" alt="Cute" />
     
     <!-- Sounds -->
-    <audio id="yaySound" src="https://www.myinstants.com/media/sounds/yay.mp3"></audio>
     <audio id="sadSound" src="https://www.myinstants.com/media/sounds/sad-trombone.mp3"></audio>
     <audio id="tryAgainSound" src="https://www.myinstants.com/media/sounds/windows-error.mp3"></audio>
-    <audio id="kissSound" src="https://actions.google.com/sounds/v1/people/kiss.ogg"></audio>
+    <!-- New reliable kiss sound source -->
+    <audio id="kissSound">
+        <source src="https://www.myinstants.com/en/instant/yaaaaaaaay/" type="audio/mpeg">
+    </audio>
 
     <script>
         const yesBtn = document.getElementById("yesBtn");
         const noBtn = document.getElementById("noBtn");
         const message = document.getElementById("message");
         const sadSound = document.getElementById("sadSound");
-        const yaySound = document.getElementById("yaySound");
         const tryAgainSound = document.getElementById("tryAgainSound");
         const kissSound = document.getElementById("kissSound");
+    
         const cuteImg = document.getElementById("cuteImg");
+
+        // Preload sounds
+        window.addEventListener('load', function() {
+            // Try to play and immediately pause to preload
+            try {
+                kissSound.volume = 0.5; // Set appropriate volume
+                kissSound.play().then(() => {
+                    kissSound.pause();
+                    kissSound.currentTime = 0;
+                }).catch(e => console.log("Kiss sound preload error:", e));
+            } catch (e) {
+                console.log("Kiss sound error:", e);
+            }
+        });
 
         let noClickCount = 0;
         let hoverMoves = 0;
@@ -165,7 +176,10 @@
             div.innerHTML = `<div style="animation: bounce 1s infinite;">${text}</div>`;
             document.body.appendChild(div);
             setTimeout(() => (div.style.opacity = 1), 50);
-            if (sound) sound.play();
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play().catch(e => console.log("Sound play error:", e));
+            }
             setTimeout(() => {
                 div.style.opacity = 0;
                 setTimeout(() => {
@@ -187,7 +201,13 @@
         }
 
         noBtn.addEventListener("click", () => {
-            sadSound.play();
+            try {
+                sadSound.currentTime = 0;
+                sadSound.play().catch(e => console.log("Sad sound error:", e));
+            } catch (e) {
+                console.log("Sad sound error:", e);
+            }
+            
             noClickCount++;
 
             if (noClickCount === 1) {
@@ -222,7 +242,13 @@
         });
 
         yesBtn.addEventListener("click", () => {
-            kissSound.play();
+            try {
+                kissSound.currentTime = 0; // Rewind to start
+                kissSound.play().catch(e => console.log("Kiss sound error:", e));
+            } catch (e) {
+                console.log("Kiss sound error:", e);
+            }
+            
             cuteImg.src = "https://media.giphy.com/media/4N1wOi78ZGzSB6H7vK/giphy.gif";
             message.innerHTML = "Glad to hear that, even if it is just a little better. Either things are better, or you are being brave. Either way lets just laugh about dumb stuff on a call 💋";
             yesBtn.style.display = "none";
@@ -251,10 +277,6 @@
         const script = document.createElement("script");
         script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
         document.body.appendChild(script);
-    </script><script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-
-            <script>// Write JavaScript here</script>
-        
-    
+    </script>
 </body>
+</html>
